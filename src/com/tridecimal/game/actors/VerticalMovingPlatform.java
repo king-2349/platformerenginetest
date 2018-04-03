@@ -10,7 +10,7 @@ import com.tridecimal.game.tools.Constants;
 
 public class VerticalMovingPlatform extends PlatformerPhysicsActor{
 
-	float totalTime = 0;
+	float totalTime = 0;//Time platform has been moving in one direction
 	
 	public void create() {
 		super.create();
@@ -28,6 +28,7 @@ public class VerticalMovingPlatform extends PlatformerPhysicsActor{
 	public void update(float delta) {
 		totalTime+= delta;
 		
+		//Total time the platform should move in one direction
 		if(totalTime > 3) {
 			velocity.y *=-1;
 			totalTime = 0;

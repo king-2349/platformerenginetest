@@ -17,6 +17,7 @@ public class BoxTileCollider extends CollisionHandler{
 		Rectangle moveWorldBounds = other.getWorldBounds();
 		Rectangle fromWorldBounds = this.getWorldBounds();
 		if(axis == 0) {
+			//Push actor to the right or left depending on its location relative to the box
 			if(moveWorldBounds.x + moveWorldBounds.width*.5f < fromWorldBounds.x + fromWorldBounds.width*.5f) {
 				other.getOwner().setX(fromWorldBounds.x-moveWorldBounds.width-other.getBounds().x - .00001f);
 				if(other.getOwner().velocity.x > 0) {
@@ -31,6 +32,7 @@ public class BoxTileCollider extends CollisionHandler{
 			other.getOwner().acceleration.x = 0f;
 		}
 		if(axis == 1) {
+			//Push actor to the top or bottom depending on its location relative to the box
 			if(moveWorldBounds.y + moveWorldBounds.height*.5f < fromWorldBounds.y + fromWorldBounds.height*.5f) {
 				other.getOwner().setY(fromWorldBounds.y-moveWorldBounds.height-other.getBounds().y - .00001f);
 			} else {

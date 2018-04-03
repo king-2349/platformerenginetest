@@ -5,7 +5,7 @@ import com.tridecimal.game.actors.PlatformerPhysicsActor;
 
 public class VerticalFloatingPlatformerCollider extends CollisionHandler {
 
-	private float offset = .9f;
+	private float offset = .9f; //Make box slightly bigger than sprite on top to keep actor on top of platform
 
 	public VerticalFloatingPlatformerCollider(PlatformerPhysicsActor owner, Rectangle bounds, int type) {
 		super(owner, bounds, type);
@@ -21,6 +21,7 @@ public class VerticalFloatingPlatformerCollider extends CollisionHandler {
 		Rectangle fromWorldBounds = this.getWorldBounds();
 
 		if (axis == 0) {
+			//Push actor to the right or left depending on its location relative to the box
 			if (moveWorldBounds.y < fromWorldBounds.y + fromWorldBounds.height - offset) {
 				if (moveWorldBounds.x + moveWorldBounds.width * .5f < fromWorldBounds.x + fromWorldBounds.width * .5f) {
 					other.getOwner().setX(fromWorldBounds.x - moveWorldBounds.width - other.getBounds().x - .00001f);
@@ -31,6 +32,8 @@ public class VerticalFloatingPlatformerCollider extends CollisionHandler {
 			}
 		}
 		if (axis == 1) {
+			//Push actor to the top or bottom depending on its location relative to the box
+			//Check if actor is in offset region
 			if (moveWorldBounds.y >= fromWorldBounds.y + fromWorldBounds.height - offset
 					&& moveWorldBounds.y <= fromWorldBounds.y + fromWorldBounds.height) {
 				if (other.getOwner().onGround) {

@@ -9,7 +9,7 @@ public abstract class CollisionHandler {
 
 	//list of current collisions
 	private PlatformerPhysicsActor owner;
-	/*Rectangle for AABB collision*/
+	//Rectangle for AABB collision
 	private Rectangle bounds;
 	private int type;
 	
@@ -27,6 +27,8 @@ public abstract class CollisionHandler {
 	public boolean colliding(CollisionHandler other) {
 		return this.getWorldBounds().overlaps(other.getWorldBounds());
 	}
+	
+	/*Functions used for collision handling*/
 	public abstract void afterCollision(CollisionHandler other, int axis);
 	public abstract boolean fixCollision(CollisionHandler other, int axis);
 	

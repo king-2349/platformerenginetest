@@ -10,7 +10,7 @@ import com.tridecimal.game.tools.Constants;
 
 public class HorizontalMovingPlatform extends PlatformerPhysicsActor{
 
-	float totalTime = 0;
+	float totalTime = 0;//Time the platform has been moving in one direction
 	
 	public void create() {
 		super.create();
@@ -22,12 +22,15 @@ public class HorizontalMovingPlatform extends PlatformerPhysicsActor{
 		TextureRegion[] idleTextures = {new TextureRegion(Constants.sprites,0,112,32,5)};
 		super.addAnimation(new Animation<TextureRegion>(1000f,idleTextures));
 		
+		//Set up collision detection
 		super.setCollisionHandler(new HorizontalFloatingPlatformerCollider(this, new Rectangle(0,0,32,5.1f), Collider.STATIC));
 	}
 	
 	public void update(float delta) {
+		//Update time
 		totalTime+= delta;
 		
+		//Number of seconds the platform should move in one direction
 		if(totalTime > 3) {
 			velocity.x *=-1;
 			totalTime = 0;

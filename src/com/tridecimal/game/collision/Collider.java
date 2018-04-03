@@ -59,9 +59,12 @@ public class Collider {
 		}
 
 		for (CollisionHandler toFix : handlers) {
+			//Static actors dont need to check for collisions because they can't move
 			if (toFix.getType() == STATIC)
 				continue;
+			//Get list of all collisions
 			Array<CollisionHandler> collisions = getCollisionList(toFix, 0);
+			//Fix every collision and determine which actor will do the work by weight
 			for (CollisionHandler toCheck : collisions) {
 				if (!toFix.currentCollisionsX.contains(toCheck, true)) {
 					toFix.currentCollisionsX.add(toCheck);
@@ -77,12 +80,14 @@ public class Collider {
 			}
 		}
 		
+		//Do collisions for each actor with the map
 		for (CollisionHandler toFix : handlers) {
 			if (toFix.getType() == STATIC)
 				continue;
 			map.getCollisionHandler().fixCollision(toFix, 0);
 		}
 
+		//Update y velocities for all actors
 		for (CollisionHandler toUpdateY : handlers) {
 			toUpdateY.getOwner().updateY(delta);
 			toUpdateY.getOwner().positionChange.y = (toUpdateY.getOwner().velocity.y
@@ -93,7 +98,9 @@ public class Collider {
 		for (CollisionHandler toFix : handlers) {
 			if (toFix.getType() == STATIC)
 				continue;
+			//Get list of all collisions
 			Array<CollisionHandler> collisions = getCollisionList(toFix, 1);
+			//Fix every collision and determine which actor will do the work by weight
 			for (CollisionHandler toCheck : collisions) {
 				if (!toFix.currentCollisionsY.contains(toCheck, true)) {
 					toFix.currentCollisionsY.add(toCheck);
@@ -108,7 +115,8 @@ public class Collider {
 				}
 			}
 		}
-		
+
+		//Do collisions for each actor with the map
 		for (CollisionHandler toFix : handlers) {
 			if (toFix.getType() == STATIC)
 				continue;
@@ -119,6 +127,8 @@ public class Collider {
 		}
 	}
 
+	/**Get's the list of all colliders that the actor is currently touching. If the actor stops touching
+	 * an actor from last frame then alert the actor there is no longer a collision*/
 	public static Array<CollisionHandler> getCollisionList(CollisionHandler toFix, int axis) {
 		Array<CollisionHandler> collisions = new Array<CollisionHandler>();
 
@@ -164,103 +174,5 @@ public class Collider {
 		}
 
 		return collisions;
-	}
-
-	/** Return true if no collisions occurred. */
-	public static boolean fix(CollisionHandler toFix, int axis) {
-		if (toFix.getType() == STATIC) {
-			return true;
-		}
-
-		boolean noCollision = true;
-		Vector2 originalVelocity = toFix.getOwner().velocity.cpy();
-		Vector2 bestPosition = toFix.getOwner().getWorldCoordinates().cpy();
-		boolean firstCheck = true;
-
-		for (int i = 0; i < handlers.size; i++) {
-			CollisionHandler toCheck = handlers.get(i);
-			if (toFix != toCheck) {
-				Rectangle toFixWorldBounds = toFix.getWorldBounds();
-				Rectangle toCheckWorldBounds = toCheck.getWorldBounds();
-				if (toFixWorldBounds.overlaps(toCheckWorldBounds)) {
-					if ((toFix.getType() == STATIC && toCheck.getType() != STATIC)
-							|| (toFix.getType() == KINEMATIC && toCheck.getType() == DYNAMIC)
-							|| (toFix.getType() != STATIC && toFix.getType() == toCheck.getType())) {
-						noCollision &= !toFix.fixCollision(toCheck, axis);
-					} else {
-						noCollision &= !toCheck.fixCollision(toFix, axis);
-					}
-
-					if (firstCheck) {
-						bestPosition.set(toFix.getOwner().getWorldCoordinates().cpy());
-						firstCheck = false;
-					} else if (axis == 0) {
-						if (originalVelocity.x > 0 && bestPosition.x < toFix.getOwner().getWorldX()) {
-							toFix.getOwner().setX(bestPosition.x);
-						} else if (originalVelocity.x < 0 && bestPosition.x > toFix.getOwner().getWorldX()) {
-							toFix.getOwner().setX(bestPosition.x);
-						} else {
-							bestPosition.set(toFix.getOwner().getWorldCoordinates().cpy());
-						}
-					} else {
-						if (originalVelocity.y > 0 && bestPosition.y < toFix.getOwner().getWorldY()) {
-							toFix.getOwner().setY(bestPosition.y);
-						} else if (originalVelocity.y < 0 && bestPosition.y > toFix.getOwner().getWorldY()) {
-							toFix.getOwner().setY(bestPosition.y);
-						} else {
-							bestPosition.set(toFix.getOwner().getWorldCoordinates().cpy());
-						}
-					}
-				}
-			}
-		}
-
-		return noCollision;
-	}
-
-	public static boolean fix(CollisionHandler toFix, CollisionHandler calledFrom, int axis) {
-		if (toFix == null || toFix.getType() == STATIC) {
-			return true;
-		}
-
-		boolean fixedReturn = true;
-		for (int i = 0; i < handlers.size; i++) {
-			CollisionHandler toCheck = handlers.get(i);
-
-			if (toFix != toCheck && calledFrom != toCheck) {
-				Rectangle toFixWorldBounds = toFix.getWorldBounds();
-				Rectangle toCheckWorldBounds = toCheck.getWorldBounds();
-
-				if (toFixWorldBounds.overlaps(toCheckWorldBounds)) {
-					CollisionHandler moved = toFix;
-					boolean wasCollision = false;
-
-					if ((toFix.getType() == STATIC && toCheck.getType() != STATIC)
-							|| (toFix.getType() == KINEMATIC && toCheck.getType() == DYNAMIC)
-							|| (toFix.getType() != STATIC && toFix.getType() == toCheck.getType())) {
-						wasCollision = toFix.fixCollision(moved = toCheck, axis);
-					} else {
-						wasCollision = toCheck.fixCollision(moved = toFix, axis);
-					}
-
-					if (wasCollision) {
-						if (moved != toFix) {
-							boolean fixed = fix(moved, toFix, axis);
-							if (!fixed) {
-								toFixWorldBounds = toFix.getWorldBounds();
-								toCheckWorldBounds = toCheck.getWorldBounds();
-								if (toFixWorldBounds.overlaps(toCheckWorldBounds)) {
-									toCheck.fixCollision(toFix, axis);
-									return false;
-								}
-							}
-						} else {
-							fixedReturn = false;
-						}
-					}
-				}
-			}
-		}
-		return fixedReturn;
 	}
 }

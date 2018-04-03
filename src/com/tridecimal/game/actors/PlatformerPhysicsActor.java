@@ -6,7 +6,7 @@ import com.tridecimal.game.collision.CollisionHandler;
 
 public abstract class PlatformerPhysicsActor extends GameObject {
 
-	protected CollisionHandler collisionHandler;
+	protected CollisionHandler collisionHandler; //Object used for collision between actors
 
 	public Vector2 velocity, acceleration; // basics
 	public Vector2 maxVelocity, friction; // constraints
@@ -20,6 +20,7 @@ public abstract class PlatformerPhysicsActor extends GameObject {
 	public boolean onGround;
 
 	public void create() {
+		//Initialize all vectors to 0 by default
 		velocity = new Vector2(0f, 0f);
 		acceleration = new Vector2(0f, 0f);
 		maxVelocity = new Vector2(0f, 0f);
@@ -35,10 +36,11 @@ public abstract class PlatformerPhysicsActor extends GameObject {
 
 	@Override
 	public void update(float delta) {
-		
+		//Used for non physics updates
 	}
 	
 	public void updateX(float delta) {
+		//Update the acceleration and velocity of x based on constraints
 		if (acceleration.x != 0) {
 			lastNonZeroAcceleration.x = acceleration.x;
 		}
@@ -72,6 +74,7 @@ public abstract class PlatformerPhysicsActor extends GameObject {
 	}
 	
 	public void updateY(float delta) {
+		//Update the acceleration and velocity of y based on constraints
 		if (acceleration.y != 0) {
 			lastNonZeroAcceleration.y = acceleration.y;
 		}
@@ -98,10 +101,6 @@ public abstract class PlatformerPhysicsActor extends GameObject {
 				lastNonZeroVelocity.y = velocity.y;
 			}
 		}
-	}
-
-	public void postFrame() {
-		
 	}
 
 	public CollisionHandler getCollisionHandler() {

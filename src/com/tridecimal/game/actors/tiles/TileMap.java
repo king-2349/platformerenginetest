@@ -11,6 +11,7 @@ import com.tridecimal.game.tools.Constants;
 
 public class TileMap extends PlatformerPhysicsActor {
 
+	//Store an array of tiles for easy access
 	private Tile[][] tiles;
 
 	public void create() {
@@ -20,10 +21,15 @@ public class TileMap extends PlatformerPhysicsActor {
 		
 		maxVelocity.set(0, 0);
 
+		//Give collider but don't add it to the list of colliders
+		//Collisions will be checked separetly 
 		super.collisionHandler = new MapCollider(this);
 	}
 
 	public void createMap() {
+		//Create a basic map for testing purposes
+		//In an actual game this could be automated from tile map editor
+		
 		tiles = new Tile[15][11];
 		super.setBounds(0, 0, 16 * tiles.length, 16 * tiles[0].length);
 
@@ -99,6 +105,7 @@ public class TileMap extends PlatformerPhysicsActor {
 	}
 
 	public Tile getTile(int x, int y) {
+		//Make sure tile requested isn't out of bounds
 		if (x < 0 || x >= tiles.length || y < 0 || y >= tiles[0].length) {
 			return null;
 		}
@@ -117,7 +124,8 @@ public class TileMap extends PlatformerPhysicsActor {
 		}
 
 		@Override
-		public boolean fixCollision(CollisionHandler other, int axis) {			
+		public boolean fixCollision(CollisionHandler other, int axis) {		
+			//Get list of all current tiles being collided with
 			Rectangle moveWorldBounds = other.getWorldBounds();
 			LinkedList<Tile> handlers = new LinkedList<Tile>();
 			for (int y = (int) (moveWorldBounds.y / 16); y <= (int) ((moveWorldBounds.y + moveWorldBounds.height)
@@ -131,6 +139,8 @@ public class TileMap extends PlatformerPhysicsActor {
 				}
 			}
 
+			//Essentially the rest of this code finds finds the tile that pushes the actor farthest back
+			//This will make it so the actor is not left in a tile after the collision handling
 			boolean anyMoved = false;
 			Vector2 originalVelocity = other.getOwner().velocity.cpy();
 			Vector2 bestPosition = other.getOwner().getWorldCoordinates().cpy(); 

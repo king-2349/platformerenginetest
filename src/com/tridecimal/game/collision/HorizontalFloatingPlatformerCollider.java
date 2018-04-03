@@ -11,7 +11,9 @@ public class HorizontalFloatingPlatformerCollider extends CollisionHandler {
 
 	public void afterCollision(CollisionHandler other, int axis) {
 		if (axis == 1) {
+			//Give the actor the velocity of the platform permanently
 			other.getOwner().velocity.x += other.getOwner().tempVelocity.x;
+			//Set temporary velocity back to 0
 			other.getOwner().tempVelocity.x = 0;
 		}
 	}
@@ -21,6 +23,7 @@ public class HorizontalFloatingPlatformerCollider extends CollisionHandler {
 		Rectangle fromWorldBounds = this.getWorldBounds();
 
 		if (axis == 0) {
+			
 			if (moveWorldBounds.x + moveWorldBounds.width * .5f < fromWorldBounds.x + fromWorldBounds.width * .5f) {
 				other.getOwner().setX(fromWorldBounds.x - moveWorldBounds.width - other.getBounds().x - .00001f);
 			} else {
@@ -36,6 +39,7 @@ public class HorizontalFloatingPlatformerCollider extends CollisionHandler {
 				other.getOwner().onGround = true;
 			}
 			other.getOwner().velocity.y = this.getOwner().velocity.y;
+			//Give the actor the velocity of the platform so it gets pulled along with the platform
 			other.getOwner().tempVelocity.x = this.getOwner().velocity.x;
 		}
 

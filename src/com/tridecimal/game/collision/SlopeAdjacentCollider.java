@@ -21,6 +21,9 @@ public class SlopeAdjacentCollider extends CollisionHandler {
 	public boolean fixCollision(CollisionHandler other, int axis) {
 		Rectangle moveWorldBounds = other.getWorldBounds();
 		Rectangle fromWorldBounds = this.getWorldBounds();
+		
+		/*This is a special block but next to a slope that will be passable on only one side.
+		 * This allows for the actor to climb slopes without getting stuck*/
 
 		if (axis == 0) {
 			if (shift == -1) {

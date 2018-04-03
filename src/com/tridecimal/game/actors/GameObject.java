@@ -11,15 +11,15 @@ import com.badlogic.gdx.utils.Array;
 public abstract class GameObject extends Group {
 
 	private Array<Animation<TextureRegion>> animations;
-	private int currentAnimation;
-	private float animationTime;
+	private int currentAnimation; //index of current animation in animations
+	private float animationTime; //animationTime is seconds. Gets reset for every new animation
 
 	public GameObject() {
 		animations = new Array<Animation<TextureRegion>>();
 		currentAnimation = 0;
 		animationTime = 0;
 
-		create();
+		create(); //Initialize the game object
 	}
 
 	public abstract void create();
@@ -41,20 +41,16 @@ public abstract class GameObject extends Group {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
+		//Pick animation before drawing
 		pickAnimation();
 		batch.setColor(getColor().r, getColor().g, getColor().b, parentAlpha * getColor().a);
+		//Only draw if there is something to draw
 		if (animations.size > 0) {
 			batch.draw(animations.get(currentAnimation).getKeyFrame(animationTime, true), getX(), getY(),
 					super.getOriginX(), super.getOriginY(), super.getWidth(), super.getHeight(), super.getScaleX(),
 					super.getScaleY(), super.getRotation());
 		}
 		super.drawChildren(batch, parentAlpha);
-		
-		postFrame();
-	}
-	
-	public void postFrame() {
-		
 	}
 
 	public Vector2 getWorldCoordinates() {

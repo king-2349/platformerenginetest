@@ -11,6 +11,7 @@ import com.tridecimal.game.tools.Constants;
 
 public class Player extends PlatformerPhysicsActor{
 	
+	//Variables to make variable jump height
 	boolean jumping = false, canJump = false;
 	float ogJump = 45f;
 	float jumpForce = ogJump;
@@ -23,6 +24,7 @@ public class Player extends PlatformerPhysicsActor{
 		
 		super.setCollisionHandler(new BoxTileCollider(this,new Rectangle(5,0,7,30),Collider.KINEMATIC));
 		
+		//Add all of the players animations
 		TextureRegion[] idleRightTextures = {new TextureRegion(Constants.sprites,0,0,16,32),new TextureRegion(Constants.sprites,16,0,16,32),
 				new TextureRegion(Constants.sprites,32,0,16,32),new TextureRegion(Constants.sprites,48,0,16,32)};
 		addAnimation(new Animation<TextureRegion>(.2f, idleRightTextures));
@@ -39,8 +41,6 @@ public class Player extends PlatformerPhysicsActor{
 	
 	@Override
 	public void update(float delta) {
-//		System.out.println(getX()+"  "+getY());
-		
 		acceleration.set(0,-15f);
 		
 		if(Gdx.input.isKeyPressed(Keys.RIGHT)) {			
@@ -49,6 +49,8 @@ public class Player extends PlatformerPhysicsActor{
 		if(Gdx.input.isKeyPressed(Keys.LEFT)) {			
 			acceleration.x -= 4f;
 		}
+		
+		//The amount of time the user presses space determines the height of the jump
 		if(canJump && (onGround || jumping) && Gdx.input.isKeyPressed(Keys.SPACE)) {
 			if(jumpForce <= 0f) {
 				canJump = false;
@@ -70,11 +72,10 @@ public class Player extends PlatformerPhysicsActor{
 		
 		
 		super.update(delta);
-		
-//		System.out.println(velocity);
 	}
 	
 	public void pickAnimation() {
+		//Pick animation based on acceleration and velocity of player
 		if(acceleration.x == 0) {
 			if(lastNonZeroAcceleration.x > 0)
 				super.setAnimation(0);
